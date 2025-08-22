@@ -142,14 +142,44 @@ def resume_builder_page():
                 st.session_state[f"{section}_count"] += 1
             remove_indices = []
             entries = entries[: st.session_state[f"{section}_count"]]
-            while len(entries) < st.session_state[f"{section}_count"]:
-                entries.append({f: "" for f in fields})
             for i in range(st.session_state[f"{section}_count"]):
                 cols = st.columns([6, 1])
                 with cols[0]:
                     st.markdown(f"**{section} {i + 1}**")
                     for f in fields:
-                        if f == "end":
+                        if f == "bullets":
+                            if f"bullets_count_{i}" not in st.session_state:
+                                existing_bullets = entries[i].get("bullets", [])
+                                if isinstance(existing_bullets, str):
+                                    existing_bullets = [existing_bullets]
+                                # Always start with 1 bullet point, regardless of existing length
+                                st.session_state[f"bullets_count_{i}"] = 1
+                            bullets = entries[i].get("bullets", [])
+                            if isinstance(bullets, str):
+                                bullets = [bullets]
+                            bullets = bullets[: st.session_state[f"bullets_count_{i}"]]
+                            while len(bullets) < st.session_state[f"bullets_count_{i}"]:
+                                bullets.append("")
+                            for j in range(st.session_state[f"bullets_count_{i}"]):
+                                bullets[j] = st.text_input(
+                                    f"Experience {i + 1} - Bullet {j + 1}",
+                                    value=bullets[j],
+                                    key=f"exp_{i}_bullet_{j}",
+                                )
+                            bullet_cols = st.columns([1, 1])
+                            with bullet_cols[0]:
+                                if st.button("+ Add Bullet", key=f"add_bullet_{i}"):
+                                    st.session_state[f"bullets_count_{i}"] += 1
+                                    st.rerun()
+                            with bullet_cols[1]:
+                                if st.button("Remove Bullet", key=f"remove_bullet_{i}"):
+                                    if st.session_state[f"bullets_count_{i}"] > 1:
+                                        st.session_state[f"bullets_count_{i}"] -= 1
+                                        st.rerun()
+                            entries[i]["bullets"] = bullets[
+                                : st.session_state[f"bullets_count_{i}"]
+                            ]
+                        elif f == "end":
                             present_key = f"{section}_present_{i}"
                             is_present = st.checkbox(
                                 "Present",
@@ -181,6 +211,7 @@ def resume_builder_page():
                 with cols[1]:
                     if st.button("Remove", key=f"remove_{section}_{i}"):
                         remove_indices.append(i)
+                        remove_indices.append(i)
             if remove_indices:
                 for idx in sorted(remove_indices, reverse=True):
                     entries.pop(idx)
@@ -195,7 +226,88 @@ def resume_builder_page():
 
     # Projects
     if "Projects" in selected_sections:
-        multi_entry_section("Projects", ["name", "description", "tech", "link"])
+
+        def projects_section():
+            section = "Projects"
+            fields = ["name", "bullets", "tech", "link"]
+            st.subheader(section)
+            entries = resume_data.get(section.lower(), [])
+            if f"{section}_count" not in st.session_state:
+                st.session_state[f"{section}_count"] = len(entries) if entries else 1
+            if st.button(f"+ Add {section}"):
+                st.session_state[f"{section}_count"] += 1
+            remove_indices = []
+            entries = entries[: st.session_state[f"{section}_count"]]
+            while len(entries) < st.session_state[f"{section}_count"]:
+                entries.append({f: "" for f in fields})
+            for i in range(st.session_state[f"{section}_count"]):
+                cols = st.columns([6, 1])
+                with cols[0]:
+                    st.markdown(f"**{section} {i + 1}**")
+                    for f in fields:
+                        if f == "bullets":
+                            if f"project_bullets_count_{i}" not in st.session_state:
+                                existing_bullets = entries[i].get("bullets", [])
+                                if isinstance(existing_bullets, str):
+                                    existing_bullets = [existing_bullets]
+                                st.session_state[f"project_bullets_count_{i}"] = 1
+                            bullets = entries[i].get("bullets", [])
+                            if isinstance(bullets, str):
+                                bullets = [bullets]
+                            bullets = bullets[
+                                : st.session_state[f"project_bullets_count_{i}"]
+                            ]
+                            while (
+                                len(bullets)
+                                < st.session_state[f"project_bullets_count_{i}"]
+                            ):
+                                bullets.append("")
+                            for j in range(
+                                st.session_state[f"project_bullets_count_{i}"]
+                            ):
+                                bullets[j] = st.text_input(
+                                    f"Project {i + 1} - Bullet {j + 1}",
+                                    value=bullets[j],
+                                    key=f"proj_{i}_bullet_{j}",
+                                )
+                            bullet_cols = st.columns([1, 1])
+                            with bullet_cols[0]:
+                                if st.button(
+                                    "+ Add Bullet", key=f"add_project_bullet_{i}"
+                                ):
+                                    st.session_state[f"project_bullets_count_{i}"] += 1
+                                    st.rerun()
+                            with bullet_cols[1]:
+                                if st.button(
+                                    "Remove Bullet", key=f"remove_project_bullet_{i}"
+                                ):
+                                    if (
+                                        st.session_state[f"project_bullets_count_{i}"]
+                                        > 1
+                                    ):
+                                        st.session_state[
+                                            f"project_bullets_count_{i}"
+                                        ] -= 1
+                                        st.rerun()
+                            entries[i]["bullets"] = bullets[
+                                : st.session_state[f"project_bullets_count_{i}"]
+                            ]
+                        else:
+                            entries[i][f] = st.text_input(
+                                f"{f.title()} {i + 1}",
+                                value=entries[i].get(f, ""),
+                                key=f"{section}_{f}_{i}",
+                            )
+                with cols[1]:
+                    if st.button("Remove", key=f"remove_{section}_{i}"):
+                        remove_indices.append(i)
+            if remove_indices:
+                for idx in sorted(remove_indices, reverse=True):
+                    entries.pop(idx)
+                st.session_state[f"{section}_count"] = len(entries)
+            resume_data[section.lower()] = entries
+
+        projects_section()
 
     # Skills
     if "Skills" in selected_sections:
