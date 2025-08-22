@@ -1,6 +1,6 @@
 # Resume builder forms
 import streamlit as st
-from resume_storage import save_resume, load_resumes, duplicate_resume
+from resume_storage import save_resume, load_resumes
 from utils import validate_resume_name
 
 
@@ -184,13 +184,6 @@ def resume_builder_page():
                         )
             else:
                 st.info("No resume data to preview.")
-        new_name = st.text_input("New Resume Name")
-        if st.button("Duplicate Resume"):
-            if validate_resume_name(new_name):
-                duplicate_resume(user, resume_name, new_name)
-                st.success("Resume duplicated.")
-            else:
-                st.error("Invalid or duplicate name.")
         if st.button("Delete Resume"):
             from resume_storage import delete_resume
 
