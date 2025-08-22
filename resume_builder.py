@@ -27,6 +27,7 @@ def resume_builder_page():
 
     # Section selection
     all_sections = [
+        "Contact Info",
         "Summary",
         "Experience",
         "Education",
@@ -34,22 +35,24 @@ def resume_builder_page():
         "Skills",
         "Certificates",
         "Publications",
-        "Contact Info",
     ]
     # Only use valid section names for default
     valid_defaults = [
         s
-        for s in (resume_data.keys() if resume_data else ["Summary", "Contact Info"])
+        for s in (resume_data.keys() if resume_data else ["Contact Info", "Summary"])
         if s in all_sections
     ]
     selected_sections = st.multiselect(
         "Select sections to add", all_sections, default=valid_defaults
     )
 
-    # Contact Info
+    # Contact Info (now before Summary)
     if "Contact Info" in selected_sections:
         st.subheader("Contact Info")
         contact = resume_data.get("contact", {})
+        contact["full_name"] = st.text_input(
+            "Full Name", value=contact.get("full_name", "")
+        )
         contact["phone"] = st.text_input("Phone Number", value=contact.get("phone", ""))
         contact["email"] = st.text_input("Email", value=contact.get("email", ""))
         contact["location"] = st.text_input(
@@ -61,7 +64,7 @@ def resume_builder_page():
         contact["github"] = st.text_input("GitHub", value=contact.get("github", ""))
         resume_data["contact"] = contact
 
-    # Summary
+    # Summary (after Contact Info)
     if "Summary" in selected_sections:
         st.subheader("Summary")
         resume_data["summary"] = st.text_area(
@@ -87,11 +90,34 @@ def resume_builder_page():
             with cols[0]:
                 st.markdown(f"**{section} {i + 1}**")
                 for f in fields:
-                    entries[i][f] = st.text_input(
-                        f"{f.title()} {i + 1}",
-                        value=entries[i].get(f, ""),
-                        key=f"{section}_{f}_{i}",
-                    )
+                    # For 'end' field in Experience, Education, Projects, add 'Present' option
+                    if f == "end" and section in [
+                        "Experience",
+                        "Education",
+                        "Projects",
+                    ]:
+                        present_key = f"{section}_present_{i}"
+                        is_present = st.checkbox(
+                            "Present",
+                            value=entries[i].get("present", False),
+                            key=present_key,
+                        )
+                        if is_present:
+                            entries[i][f] = "Present"
+                            entries[i]["present"] = True
+                        else:
+                            entries[i][f] = st.text_input(
+                                f"{f.title()} {i + 1}",
+                                value=entries[i].get(f, ""),
+                                key=f"{section}_{f}_{i}",
+                            )
+                            entries[i]["present"] = False
+                    else:
+                        entries[i][f] = st.text_input(
+                            f"{f.title()} {i + 1}",
+                            value=entries[i].get(f, ""),
+                            key=f"{section}_{f}_{i}",
+                        )
             with cols[1]:
                 if st.button("Remove", key=f"remove_{section}_{i}"):
                     remove_indices.append(i)
@@ -104,9 +130,64 @@ def resume_builder_page():
 
     # Experience
     if "Experience" in selected_sections:
-        multi_entry_section(
-            "Experience", ["company", "title", "bullets", "start", "end"]
-        )
+
+        def experience_section():
+            section = "Experience"
+            fields = ["company", "title", "bullets", "start", "end", "tech_stack"]
+            st.subheader(section)
+            entries = resume_data.get(section.lower(), [])
+            if f"{section}_count" not in st.session_state:
+                st.session_state[f"{section}_count"] = len(entries) if entries else 1
+            if st.button(f"+ Add {section}"):
+                st.session_state[f"{section}_count"] += 1
+            remove_indices = []
+            entries = entries[: st.session_state[f"{section}_count"]]
+            while len(entries) < st.session_state[f"{section}_count"]:
+                entries.append({f: "" for f in fields})
+            for i in range(st.session_state[f"{section}_count"]):
+                cols = st.columns([6, 1])
+                with cols[0]:
+                    st.markdown(f"**{section} {i + 1}**")
+                    for f in fields:
+                        if f == "end":
+                            present_key = f"{section}_present_{i}"
+                            is_present = st.checkbox(
+                                "Present",
+                                value=entries[i].get("present", False),
+                                key=present_key,
+                            )
+                            if is_present:
+                                entries[i][f] = "Present"
+                                entries[i]["present"] = True
+                            else:
+                                entries[i][f] = st.text_input(
+                                    f"{f.title()} {i + 1}",
+                                    value=entries[i].get(f, ""),
+                                    key=f"{section}_{f}_{i}",
+                                )
+                                entries[i]["present"] = False
+                        elif f == "tech_stack":
+                            entries[i][f] = st.text_input(
+                                f"Tech Stack (comma separated) {i + 1}",
+                                value=entries[i].get(f, ""),
+                                key=f"{section}_{f}_{i}",
+                            )
+                        else:
+                            entries[i][f] = st.text_input(
+                                f"{f.title()} {i + 1}",
+                                value=entries[i].get(f, ""),
+                                key=f"{section}_{f}_{i}",
+                            )
+                with cols[1]:
+                    if st.button("Remove", key=f"remove_{section}_{i}"):
+                        remove_indices.append(i)
+            if remove_indices:
+                for idx in sorted(remove_indices, reverse=True):
+                    entries.pop(idx)
+                st.session_state[f"{section}_count"] = len(entries)
+            resume_data[section.lower()] = entries
+
+        experience_section()
 
     # Education
     if "Education" in selected_sections:
