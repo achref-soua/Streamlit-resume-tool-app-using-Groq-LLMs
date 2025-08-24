@@ -15,12 +15,14 @@ Sign up, log in, and log out securely. Passwords are hashed and stored in a priv
 Create, edit, duplicate, delete, and visualize multiple resumes. Add sections like summary, experience, education, projects, skills, certificates, publications, and contact info. Dynamic forms allow adding/removing entries and bullet points for each section. Saved resumes can be edited and updated.
 
 ![Resume Builder Main](screenshots/builder_1.png)
+
 ![Resume Builder Entry Editing](screenshots/builder_2.png)
 
 ### Resume Adaptation
 Select a resume and adapt it to a job description using Groq LLM. Results are editable and can be saved as a new resume or overwrite the original. Prompts are optimized for ATS-friendly output.
 
 ![Resume Adapter Job Description](screenshots/adapter_1.png)
+
 ![Resume Adapter Adapted Resume](screenshots/adapter_2.png)
 
 ### Resume Enhancement
