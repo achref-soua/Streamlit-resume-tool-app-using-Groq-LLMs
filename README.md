@@ -38,6 +38,8 @@ Instantly generate a professional, ATS-friendly PDF resume using ReportLab. Down
 ![Sample PDF Output](sample_output/sample_resume.png)
 *See `sample_output/sample_resume.pdf` for the actual PDF file.*
 
+![PDF Output Sample](screenshots/output_sample.png)
+
 ## Folder Structure
 
 ```
