@@ -1,5 +1,5 @@
 
-# Resume Tool App
+# Streamlit Resume Tool App using Groq LLMs
 
 A modular, secure, and user-friendly Streamlit application for building, editing, adapting, enhancing, and exporting resumes using Groq LLM and ReportLab.
 
