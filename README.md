@@ -1,15 +1,17 @@
+
 # Resume Tool App
 
-A modular, secure, and user-friendly Streamlit application for building, adapting, and enhancing resumes using Groq LLM.
+A modular, secure, and user-friendly Streamlit application for building, editing, adapting, enhancing, and exporting resumes using Groq LLM and ReportLab.
 
 ## Features
 
 - **User Authentication**: Sign up, log in, and log out securely. Passwords are hashed and stored in a private database.
-- **Resume Builder**: Create, edit, duplicate, delete, and visualize multiple resumes. Add sections like summary, experience, education, projects, skills, certificates, publications, and contact info. Dynamic forms allow adding/removing entries for each section.
-- **Resume Adaptation**: Select a resume and adapt it to a job description using Groq LLM. Results are editable and can be saved as a new resume or overwrite the original.
-- **Resume Enhancement**: Select a resume and enhance it using Groq LLM. Receive constructive feedback and save the improved version.
+- **Resume Builder**: Create, edit, duplicate, delete, and visualize multiple resumes. Add sections like summary, experience, education, projects, skills, certificates, publications, and contact info. Dynamic forms allow adding/removing entries and bullet points for each section. Saved resumes can be edited and updated.
+- **Resume Adaptation**: Select a resume and adapt it to a job description using Groq LLM. Results are editable and can be saved as a new resume or overwrite the original. Prompts are optimized for ATS-friendly output.
+- **Resume Enhancement**: Select a resume and enhance it using Groq LLM. Receive constructive feedback and save the improved version. Prompts ensure clarity, impact, and modern standards.
+- **Export to PDF**: Instantly generate a professional, ATS-friendly PDF resume using ReportLab. Download your resume directly from the app. Output matches the latest resume data and sections.
 - **Security**: Credentials and database files are excluded from version control. All sensitive data is stored locally and securely.
-- **Modern UI**: Clean sidebar navigation and intuitive forms for a smooth user experience.
+- **Modern UI**: Clean sidebar navigation and intuitive forms for a smooth user experience. Dynamic controls for adding/removing entries and bullets. Consistent section logic for experience and projects.
 
 ## Folder Structure
 
@@ -21,8 +23,12 @@ resume-tool-app/
 ├── resume_storage.py     # Resume CRUD and database
 ├── resume_adapter.py     # Resume adaptation via Groq API
 ├── resume_enhancer.py    # Resume enhancement via Groq API
+├── resume_export_pdf.py  # PDF export logic (ReportLab)
+├── resume_components.py  # Modular section rendering
 ├── utils.py              # Helper functions
 ├── db/                   # SQLite database files (ignored by git)
+├── screenshots/          # Place screenshots here for documentation
+├── sample_output/        # Place sample exported PDF(s) here
 ├── .env                  # API keys (ignored by git)
 ├── .gitignore            # Ignore sensitive files
 └── README.md             # Project documentation
@@ -33,7 +39,7 @@ resume-tool-app/
 1. **Clone the repository**
 2. **Install dependencies**:
    ```bash
-   pip install streamlit bcrypt langchain_groq python-dotenv
+   pip install streamlit bcrypt langchain_groq python-dotenv reportlab
    ```
 3. **Add your Groq API key** to a `.env` file:
    ```
@@ -46,9 +52,17 @@ resume-tool-app/
 
 ## Usage
 
-- Use the sidebar to navigate between authentication, resume builder, adaptation, and enhancement features.
+- Use the sidebar to navigate between authentication, resume builder, adaptation, enhancement, and PDF export features.
 - All resumes and user data are stored locally in the `db/` folder.
 - API keys and database files are excluded from git for security.
+- Screenshots for each major feature are provided in the `screenshots/` folder:
+  - `screenshots/auth.png`: Authentication page
+  - `screenshots/builder_1.png`, `screenshots/builder_2.png`: Resume builder (main, entry editing)
+  - `screenshots/adapter_1.png`, `screenshots/adapter_2.png`: Resume adaptation (job description, adapted resume)
+  - `screenshots/enhancer.png`: Resume enhancement page
+  - `screenshots/export.png`: PDF export page
+- Sample exported PDF(s) are provided in the `sample_output/` folder:
+  - `sample_output/sample_resume.pdf`: Example output PDF
 
 ## Security Notes
 - Passwords are hashed using bcrypt.
