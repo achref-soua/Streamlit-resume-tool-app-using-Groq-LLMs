@@ -16,7 +16,12 @@ def call_groq_api(resume, job_desc, api_key):
         temperature=1,
     )
     prompt = f"""
-    You are an expert resume writer. Adapt the following resume to match the job description below. Return ONLY the result as a JSON object with the same structure as the input resume. Do not include any explanation or extra text, only the JSON object.
+    You are an expert resume writer and job matching specialist. Your job is to:
+    - Analyze the resume and the job description below.
+    - Adapt and rewrite the resume to best match the job requirements, highlighting relevant skills, experience, and achievements.
+    - Use strong action verbs, quantifiable results, and ensure the resume is ATS-friendly and tailored for the specific role.
+    - Make sure the resume is concise, impactful, and avoids unnecessary repetition.
+    - Return ONLY the result as a JSON object with the same structure as the input resume. Do not include any explanation or extra text, only the JSON object.
     Resume:
     {json.dumps(resume, indent=2)}
     Job Description:

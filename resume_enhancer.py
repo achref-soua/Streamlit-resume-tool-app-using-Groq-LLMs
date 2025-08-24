@@ -14,7 +14,12 @@ def call_groq_enhance_api(resume, api_key):
         temperature=1,
     )
     prompt = f"""
-    You are an expert resume coach. Enhance the following resume to improve its impact and provide constructive feedback. Return ONLY the result as a JSON object with the same structure as the input resume, and a 'feedback' field with your suggestions. Do not include any explanation or extra text, only the JSON object.
+    You are an expert resume coach and professional writer. Your job is to:
+    - Analyze the resume below for clarity, impact, and relevance to modern hiring standards.
+    - Rewrite and enhance each section to maximize achievements, skills, and strengths, using strong action verbs and quantifiable results wherever possible.
+    - Ensure the resume is ATS-friendly, concise, and tailored for high-impact roles in tech, business, or academia.
+    - Provide constructive feedback and suggestions for further improvement.
+    - Return ONLY the result as a JSON object with the same structure as the input resume, and a 'feedback' field with your suggestions. Do not include any explanation or extra text, only the JSON object.
     Resume:
     {json.dumps(resume, indent=2)}
     """
